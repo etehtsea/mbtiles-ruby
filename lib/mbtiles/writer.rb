@@ -1,5 +1,6 @@
 require 'digest/md5'
-require 'sequel'
+require 'mbtiles/utils'
+require 'mbtiles/database'
 
 # y, x == lat, lon == row, col
 
