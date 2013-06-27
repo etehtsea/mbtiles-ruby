@@ -3,8 +3,15 @@ require 'sequel'
 module MBTiles
   class Database
     def initialize(path = nil)
-      @db = Sequel.sqlite(path)
+      storage_type = path ? "//#{path}" : ':memory:'
+
+      @db = Sequel.connect("#{self.class.driver}:#{storage_type}")
+
       create_schema!
+    end
+
+    def self.driver
+      @driver ||= RUBY_PLATFORM == 'java' ? 'jdbc:sqlite' : 'sqlite'
     end
 
     def self.blob(blob)

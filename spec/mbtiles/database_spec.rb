@@ -1,4 +1,5 @@
 require_relative '../spec_helper'
+require 'tmpdir'
 
 describe MBTiles do
   describe 'Database' do
@@ -55,6 +56,10 @@ describe MBTiles do
       MBTiles::Database.blob('').must_be_instance_of Sequel::SQL::Blob
     end
 
+    it '.driver' do
+      MBTiles::Database.driver.must_match(/\A(jdbc\:)?sqlite\z/)
+    end
+
     it '#import_metadata' do
       db.import_metadata([['name', 'value']])
 
@@ -71,6 +76,26 @@ describe MBTiles do
       db.import_images([[0, '']])
 
       adapter[:images].first(tile_id: 0, tile_data: '').wont_be_nil
+    end
+
+    describe 'db path' do
+      it 'in memory' do
+        MBTiles::Database.new.adapter.url.must_match(/sqlite::memory:/)
+      end
+
+      describe 'in file' do
+        let(:file) do
+          "#{Dir.tmpdir}/test.db"
+        end
+
+        after do
+          FileUtils.rm(file)
+        end
+
+        it 'absolute path' do
+          MBTiles::Database.new(file).adapter.url.must_match(/sqlite:\/\/.*\/test.db/)
+        end
+      end
     end
   end
 end
