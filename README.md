@@ -1,6 +1,9 @@
-# Mbtiles
+# MBTiles
 
-TODO: Write a gem description
+MBTiles reading and writing library. Based on MBTiles specification
+version 1.1.
+
+[See MBTiles-spec](https://github.com/mapbox/mbtiles-spec).
 
 ## Installation
 

@@ -6,9 +6,9 @@ require 'mbtiles/version'
 Gem::Specification.new do |spec|
   spec.name          = 'mbtiles'
   spec.version       = MBTiles::VERSION
-  spec.authors       = ['Konstantin Shabanov']
-  spec.email         = ['etehtsea@gmail.com']
-  spec.description   = %q{MBTiles reader/writer}
+  spec.authors       = ['Konstantin Shabanov', 'Aleksey Magusev']
+  spec.email         = ['etehtsea@gmail.com', 'lexmag@gmail.com']
+  spec.description   = %q{MBTiles reader/writer. Based on mbtiles-spec v1.1}
   spec.summary       = %q{MBTiles reader/writer}
   spec.homepage      = ''
   spec.license       = 'MIT'
