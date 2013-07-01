@@ -1,26 +1,13 @@
 require 'digest/md5'
 require 'mbtiles/utils'
 require 'mbtiles/database'
+require 'mbtiles/fetcher'
+require 'mbtiles/tileset'
 
 # y, x == lat, lon == row, col
 
 module MBTiles
   class InvalidImage < Exception; end
-
-  class TileBox
-    require 'net/http'
-
-    def initialize(url)
-      @url = url
-    end
-
-    def get(zoom, column, row)
-      url = [@url, zoom, column, row].join('/') << '.png'
-      puts url
-
-      Net::HTTP.get(URI.parse(url))
-    end
-  end
 
   class Writer
     include Utils
@@ -32,16 +19,6 @@ module MBTiles
       @mbtiles = Database.new(path)
       @min_zoom, @max_zoom = [0, 16]
       @fetcher = fetcher
-    end
-
-    def tile_blob(zoom, column, row)
-      blob = @fetcher.get(zoom, column, row)
-
-      if valid_image?(blob)
-        blob
-      else
-        raise InvalidImage.new([zoom, column, row].join('/'))
-      end
     end
 
     def center
@@ -66,45 +43,38 @@ module MBTiles
         { 'minzoom' => @min_zoom },
         { 'maxzoom' => @max_zoom },
         { 'type'    => 'baselayer' },
-        { 'name'    => 'name' },
+        { 'name'    => 'sample' },
         { 'version' => '1.0.0' },
         { 'format'  => 'png' },
         { 'description' => 'description' }
-      ]
+      ].map { |m| { name: m.keys.first, value: m.values.first } }
 
-      @mbtiles.import_metadata(metadata.flat_map(&:to_a))
+      @mbtiles.insert_metadata(metadata)
     end
 
     def save
       write_metadata!
 
-      values = []
-      images = {}
+      tile_list.each_slice(30) do |t|
+        TileSet.new(t, @fetcher).import(@mbtiles)
+      end
 
-      (@min_zoom..@max_zoom).each do |zoom|
+      @mbtiles.adapter
+    end
+
+    def tile_list
+      @tile_list ||= (@min_zoom..@max_zoom).flat_map do |zoom|
         min_xy = coords2tile(*@coords.first(2), zoom)
         max_xy = coords2tile(*@coords.last(2), zoom)
 
         first_column, first_row = min_xy.map { |axis| (axis / ADJUSTMENT).to_i }
         last_column, last_row = max_xy.map { |axis| (axis * ADJUSTMENT).ceil }
 
-        max_row = (1 << zoom) - 1
+        cols = (first_column..last_column).to_a
+        rows = (first_row..last_row).to_a
 
-        (first_column..last_column).map do |column|
-          (first_row..last_row).map do |row|
-            blob = tile_blob(zoom, column, row)
-            tile_id = Digest::MD5.hexdigest(blob)
-
-            images[tile_id] = Database.blob(blob)
-            values << [zoom, column, max_row - row, tile_id]
-          end
-        end
+        cols.flat_map { |c| rows.map { |r| [zoom, c, r] } }
       end
-
-      @mbtiles.import_images(images.to_a)
-      @mbtiles.import_map(values)
-
-      @mbtiles.adapter
     end
   end
 end

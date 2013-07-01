@@ -3,26 +3,19 @@ require_relative '../spec_helper'
 describe MBTiles do
   describe 'Writer' do
     let(:mbtiles) do
-      mbtiles = MBTiles::Writer.new([59.950675,30.291254,59.949888,30.292638], Object.new)
-
-      mbtiles.stub :tile_blob, '' do
-        mbtiles.save
-      end
+      MBTiles::Writer.new([59.950675,30.291254,59.949888,30.292638], Object.new)
     end
 
-    it 'tile number' do
-      mbtiles[:tiles].count.must_equal 569
+    it '#tile_list' do
+      mbtiles.tile_list.count.must_equal 569
     end
 
     it '#center' do
-      center = [13.377228, 52.517057, 8]
-
-      MBTiles::Writer.new([52.517892228, 13.375854492, 52.516220864, 13.378601074], '').center.must_equal center
+      mbtiles.center.must_equal [30.291946, 59.950282, 8]
     end
 
     it '#bounds' do
-      bounds = [13.375854, 52.516221, 13.378601, 52.517892]
-      MBTiles::Writer.new([52.517892228, 13.375854492, 52.516220864, 13.378601074], '').bounds.must_equal bounds
+      mbtiles.bounds.must_equal [30.291254, 59.949888, 30.292638, 59.950675]
     end
   end
 end

@@ -22,16 +22,16 @@ module MBTiles
       @db
     end
 
-    def import_metadata(records)
-      @db[:metadata].import([:name, :value], records)
+    def insert_metadata(records)
+      @db[:metadata].multi_insert(records)
     end
 
-    def import_map(records)
-      @db[:map].import([:zoom_level, :tile_column, :tile_row, :tile_id], records)
+    def insert_map(records)
+      @db[:map].multi_insert(records)
     end
 
-    def import_images(records)
-      @db[:images].import([:tile_id, :tile_data], records)
+    def insert_images(records)
+      @db[:images].multi_replace(records)
     end
 
     def create_schema!

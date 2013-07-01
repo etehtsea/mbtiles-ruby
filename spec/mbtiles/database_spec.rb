@@ -60,20 +60,20 @@ describe MBTiles do
       MBTiles::Database.driver.must_match(/\A(jdbc\:)?sqlite\z/)
     end
 
-    it '#import_metadata' do
-      db.import_metadata([['name', 'value']])
+    it '#insert_metadata' do
+      db.insert_metadata([{ name: 'name', value: 'value' }])
 
       adapter[:metadata].first(name: 'name', value: 'value').wont_be_nil
     end
 
-    it '#import_map' do
-      db.import_map([[0, 0, 0, 0]])
+    it '#insert_map' do
+      db.insert_map([{ zoom_level: 0, tile_column: 0, tile_row: 0, tile_id: 0 }])
 
       adapter[:map].first(zoom_level: 0, tile_column: 0, tile_row: 0, tile_id: 0).wont_be_nil
     end
 
-    it '#import_images' do
-      db.import_images([[0, '']])
+    it '#insert_images' do
+      db.insert_images([{ tile_id: 0, tile_data: '' }])
 
       adapter[:images].first(tile_id: 0, tile_data: '').wont_be_nil
     end

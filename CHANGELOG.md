@@ -1,5 +1,9 @@
 ## unreleased ##
 
+*   Parallel downloading support
+
+    *Konstantin Shabanov*
+
 *   JRuby support
 
     *Konstantin Shabanov*
