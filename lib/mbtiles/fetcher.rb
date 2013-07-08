@@ -5,9 +5,15 @@ require 'typhoeus/adapters/faraday'
 module MBTiles
   class ParallelFetcher
     def initialize(url, timeout = 30)
+      @url = url
       @conn = Faraday.new(url: url, request: { timeout: timeout }) do |f|
         f.adapter :typhoeus
       end
+    end
+
+    def mock!
+      response = Typhoeus::Response.new(code: 200, body: '')
+      Typhoeus.stub(/#{@url}/).and_return(response)
     end
 
     def get(tile_list)
