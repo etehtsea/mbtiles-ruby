@@ -79,8 +79,22 @@ describe MBTiles do
     end
 
     describe 'db path' do
-      it 'in memory' do
-        MBTiles::Database.new.adapter.url.must_match(/sqlite::memory:/)
+      describe 'in memory' do
+        let(:db) do
+          MBTiles::Database.new
+        end
+
+        it do
+          db.adapter.url.must_match(/sqlite::memory:/)
+        end
+
+        it '#size' do
+          db.size.must_be_nil
+        end
+
+        it '#md5' do
+          db.md5.must_be_nil
+        end
       end
 
       describe 'in file' do
@@ -88,12 +102,24 @@ describe MBTiles do
           "#{Dir.tmpdir}/test.db"
         end
 
+        let(:db) do
+          MBTiles::Database.new(file)
+        end
+
         after do
           FileUtils.rm(file)
         end
 
+        it '#size' do
+          db.size.must_equal 28672
+        end
+
+        it '#md5' do
+          db.md5.must_equal '66d3cc86012fb8dd0ae66de2081552f4'
+        end
+
         it 'absolute path' do
-          MBTiles::Database.new(file).adapter.url.must_match(/sqlite:\/\/.*\/test.db/)
+          db.adapter.url.must_match(/sqlite:\/\/.*\/test.db/)
         end
       end
     end

@@ -59,7 +59,7 @@ module MBTiles
         TileSet.new(t, @fetcher).import(@mbtiles)
       end
 
-      @mbtiles.adapter
+      @mbtiles
     end
 
     def tile_list

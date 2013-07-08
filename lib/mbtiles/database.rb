@@ -5,6 +5,7 @@ module MBTiles
     def initialize(path = nil)
       storage_type = path ? "//#{path}" : ':memory:'
 
+      @path = path
       @db = Sequel.connect("#{self.class.driver}:#{storage_type}")
 
       create_schema!
@@ -65,6 +66,14 @@ module MBTiles
         images.tile_data AS tile_data
         FROM map JOIN images ON images.tile_id = map.tile_id;'
       @db.create_view(:tiles, view_query)
+    end
+
+    def size
+      @path ? File.size(@path) : nil
+    end
+
+    def md5
+      @path ? Digest::MD5.file(@path).hexdigest : nil
     end
   end
 end
