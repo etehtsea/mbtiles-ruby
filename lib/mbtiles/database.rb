@@ -2,6 +2,8 @@ require 'sequel'
 
 module MBTiles
   class Database
+    attr_reader :path
+
     def initialize(path = nil)
       storage_type = path ? "//#{path}" : ':memory:'
 

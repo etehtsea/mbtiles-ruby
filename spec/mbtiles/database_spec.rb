@@ -95,6 +95,10 @@ describe MBTiles do
         it '#md5' do
           db.md5.must_be_nil
         end
+
+        it '#path' do
+          db.path.must_be_nil
+        end
       end
 
       describe 'in file' do
@@ -116,6 +120,10 @@ describe MBTiles do
 
         it '#md5' do
           db.md5.must_equal '66d3cc86012fb8dd0ae66de2081552f4'
+        end
+
+        it '#path' do
+          db.path.must_equal file
         end
 
         it 'absolute path' do
