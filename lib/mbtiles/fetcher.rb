@@ -24,7 +24,6 @@ module MBTiles
           zoom, column, row = tile
 
           path = ['/osm', zoom, column, row].join('/') << '.png'
-          puts path
           responses << @conn.get(path)
         end
       end
@@ -47,7 +46,6 @@ module MBTiles
       tile_list.map do |tile|
         zoom, column, row = tile
         path = ['/osm', zoom, column, row].join('/') << '.png'
-        puts path
 
         @conn.get(path).body
       end
