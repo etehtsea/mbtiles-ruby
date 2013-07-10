@@ -34,26 +34,4 @@ module MBTiles
       mbtiles.insert_map(map)
     end
   end
-
-  #class Tile
-  #  attr_reader :id, :blob, :zoom, :column, :row
-
-  #  def initialize(zoom, column, row, fetcher)
-  #    @zoom, @column, @row = zoom, column, row
-  #    @id, @blob = get_blob(zoom, column, row)
-  #    @fetcher = fetcher
-  #  end
-
-  #  def get_blob(zoom, column, row)
-  #    blob = @fetcher.get(zoom, column, row)
-
-  #    if Utils::valid_image?(blob)
-  #      id = Digest::MD5.hexdigest(blob)
-
-  #      [id, blob]
-  #    else
-  #      raise InvalidImage.new([zoom, column, row].join('/'))
-  #    end
-  #  end
-  #end
 end
