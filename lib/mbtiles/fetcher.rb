@@ -31,8 +31,12 @@ module MBTiles
       if responses.all? { |r| r.status == 200 }
         responses.map(&:body)
       else
-        errs = responses.select { |r| r.status != 200 }
-        raise RuntimeError, errs.map(&:status)
+        errs = responses.select { |r| !!r.success? }
+        if errs.all? { |e| Utils.valid_image?(e.body) }
+          responses.map!(&:body)
+        else
+          raise RuntimeError, errs.map { |e| { e.status => e.headers } }
+        end
       end
     end
   end
