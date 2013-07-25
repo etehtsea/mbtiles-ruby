@@ -7,7 +7,7 @@ describe MBTiles do
     end
 
     it '#tile_list' do
-      mbtiles.tile_list.count.must_equal 569
+      (0..16).reduce([]) { |sum, z| sum + mbtiles.tile_list(z) }.count.must_equal 569
     end
 
     it '#center' do

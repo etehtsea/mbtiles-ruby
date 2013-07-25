@@ -55,26 +55,26 @@ module MBTiles
     def save
       write_metadata!
 
-      tile_list.each_slice(30) do |t|
-        TileSet.new(t, @fetcher).import(@mbtiles)
+      (@min_zoom..@max_zoom).each do |zoom|
+        tile_list(zoom).each_slice(30) do |t|
+          TileSet.new(t, @fetcher).import(@mbtiles)
+        end
       end
 
       @mbtiles
     end
 
-    def tile_list
-      @tile_list ||= (@min_zoom..@max_zoom).flat_map do |zoom|
-        min_xy = coords2tile(*@coords.first(2), zoom)
-        max_xy = coords2tile(*@coords.last(2), zoom)
+    def tile_list(zoom)
+      min_xy = coords2tile(*@coords.first(2), zoom)
+      max_xy = coords2tile(*@coords.last(2), zoom)
 
-        first_column, first_row = min_xy.map { |axis| (axis / ADJUSTMENT).to_i }
-        last_column, last_row = max_xy.map { |axis| (axis * ADJUSTMENT).ceil }
+      first_column, first_row = min_xy.map { |axis| (axis / ADJUSTMENT).to_i }
+      last_column, last_row = max_xy.map { |axis| (axis * ADJUSTMENT).ceil }
 
-        cols = (first_column..last_column).to_a
-        rows = (first_row..last_row).to_a
+      cols = (first_column..last_column).to_a
+      rows = (first_row..last_row).to_a
 
-        cols.flat_map { |c| rows.map { |r| [zoom, c, r] } }
-      end
+      cols.flat_map { |c| rows.map { |r| [zoom, c, r] } }
     end
   end
 end
