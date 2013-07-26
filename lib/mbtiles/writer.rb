@@ -14,10 +14,10 @@ module MBTiles
 
     ADJUSTMENT = 1.0003
 
-    def initialize(coords, fetcher, path = nil)
+    def initialize(coords, fetcher, zooms = [0, 16], path = nil)
       @coords = coords
       @mbtiles = Database.new(path)
-      @min_zoom, @max_zoom = [0, 16]
+      @min_zoom, @max_zoom = zooms
       @fetcher = fetcher
     end
 
