@@ -1,12 +1,13 @@
 require 'faraday'
 require 'typhoeus'
 require 'typhoeus/adapters/faraday'
+require 'uri'
 
 module MBTiles
   class ParallelFetcher
     def initialize(url, timeout = 30)
-      @url = url
-      @conn = Faraday.new(url: url, request: { timeout: timeout }) do |f|
+      @url = URI.parse(url)
+      @conn = Faraday.new(url: @url, request: { timeout: timeout }) do |f|
         f.adapter :typhoeus
       end
     end
@@ -23,7 +24,7 @@ module MBTiles
         tile_list.each do |tile|
           zoom, column, row = tile
 
-          path = ['/osm', zoom, column, row].join('/') << '.png'
+          path = [@conn.path_prefix, zoom, column, row].join('/') << '.png'
           responses << @conn.get(path)
         end
       end
